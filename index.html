@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fanuel & Gawynt Candy Delivery</title>
+    <style>
+        :root {
+            --primary-color: #ff2d55; /* Vibrant candy pink/red */
+            --secondary-color: #007aff; /* Apple blue */
+            --bg-color: #fcfcfc;
+            --card-bg: #ffffff;
+            --text-main: #1d1d1f;
+            --text-muted: #86868b;
+            --shadow-subtle: 0 8px 30px rgba(0, 0, 0, 0.04);
+            --shadow-hover: 0 15px 45px rgba(0, 0, 0, 0.08);
+            --border-radius: 20px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.6;
+        }
+
+        /* Announcement Banner */
+        .banner {
+            background: linear-gradient(135deg, #ff3b30, #ff2d55);
+            color: white;
+            text-align: center;
+            padding: 14px 20px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 15px rgba(255, 45, 85, 0.2);
+        }
+
+        /* Hero Header Section (New!) */
+        .hero {
+            text-align: center;
+            padding: 80px 20px 50px 20px;
+            background: radial-gradient(circle at top, rgba(255, 45, 85, 0.05) 0%, transparent 70%);
+        }
+
+        .hero h1 {
+            font-size: 3.2rem;
+            font-weight: 800;
+            letter-spacing: -1px;
+            color: var(--text-main);
+            margin-bottom: 10px;
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            color: var(--text-muted);
+            max-width: 600px;
+            margin: 0 auto 25px auto;
+        }
+
+        .hero .badge {
+            display: inline-block;
+            background-color: rgba(0, 122, 255, 0.1);
+            color: var(--secondary-color);
+            padding: 8px 16px;
+            border-radius: 30px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Container */
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Modern Sections */
+        .section {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 40px;
+            margin-bottom: 40px;
+            box-shadow: var(--shadow-subtle);
+            border: 1px solid rgba(0, 0, 0, 0.02);
+            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease;
+        }
+        
+        .section:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        h2 {
+            font-size: 2rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            margin-bottom: 20px;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* How It Works Section (New!) */
+        .steps-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            margin-top: 20px;
+        }
+
+        .step-card {
+            background: #fafafa;
+            border-radius: 16px;
+            padding: 25px;
+            border: 1px solid #f0f0f0;
+        }
+
+        .step-number {
+            width: 35px;
+            height: 35px;
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .step-card h3 {
+            font-size: 1.2rem;
+            margin-bottom: 8px;
+        }
+
+        .step-card p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        /* Goal Bar */
+        .goal-container {
+            text-align: center;
+        }
+
+        .goal-numbers {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .progress-bg {
+            background-color: #f2f2f7;
+            border-radius: 20px;
+            height: 28px;
+            width: 100%;
+            margin: 15px 0;
+            overflow: hidden;
+            border: 1px solid #e5e5ea;
+        }
+
+        .progress-fill {
+            background: linear-gradient(90deg, #34c759, #30d158);
+            height: 100%;
+            width: 10%; /* Change this as you approach your $150 goal! */
+            transition: width 1s ease-in-out;
+        }
+
+        /* Candy Grid */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 25px;
+            margin-top: 20px;
+        }
+
+        .product-card {
+            background: var(--card-bg);
+            border: 1px solid #f2f2f7;
+            border-radius: var(--border-radius);
+            padding: 20px;
+            text-align: center;
+            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .product-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .product-card img {
+            width: 100%;
+            height: 180px;
+            object-fit: contain;
+            margin-bottom: 15px;
+            transition: transform 0.3s ease;
+        }
+
+        .product-card:hover img {
+            transform: scale(1.05);
+        }
+
+        .product-card h3 {
+            font-size: 1.05rem;
+            margin-bottom: 8px;
+            color: var(--text-main);
+            min-height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .price {
+            font-weight: 700;
+            color: var(--primary-color);
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+        }
+
+        /* Form Inputs */
+        .qty-controls {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+        
+        .qty-btn {
+            background: #f2f2f7;
+            border: none;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .qty-btn:hover {
+            background: #e5e5ea;
+        }
+
+        input[type="number"] {
+            width: 65px;
+            padding: 8px;
+            border: 1px solid #e5e5ea;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 1.05rem;
+            font-weight: 600;
+            -moz-appearance: textfield;
+        }
+
+        input[type="number"]::-webkit-outer-spin-button,
+        input[type="number"]::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+        
+        .form-group input[type="text"],
+        .form-group input[type="email"],
+        .form-group input[type="tel"],
+        .form-group textarea {
+            width: 100%;
+            padding: 14px;
+            border: 1px solid #e5e5ea;
+            border-radius: 12px;
+            font-size: 1rem;
+            background-color: #fafafa;
+            transition: all 0.2s;
+        }
+        
+        .form-group input:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: var(--secondary-color);
+            background-color: #ffffff;
+            box-shadow: 0 0 0 4px rgba(0, 122, 255, 0.1);
+        }
+
+        /* Payment Options */
+        .payment-options {
+            display: flex;
+            gap: 20px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+
+        .payment-card {
+            flex: 1;
+            min-width: 240px;
+            border: 2px solid #e5e5ea;
+            border-radius: 16px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+        }
+
+        .payment-card:hover {
+            border-color: var(--secondary-color);
+        }
+
+        .payment-card input {
+            margin-right: 12px;
+            transform: scale(1.2);
+        }
+
+        .payment-card.selected {
+            border-color: var(--secondary-color);
+            background-color: rgba(0, 122, 255, 0.02);
+        }
+
+        .payment-note {
+            background: rgba(0, 122, 255, 0.08);
+            color: #0056b3;
+            padding: 15px;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 500;
+        }
+
+        /* Map styling */
+        .map-container {
+            width: 100%;
+            border-radius: 16px;
+            overflow: hidden;
+            margin-top: 20px;
+            border: 1px solid #e5e5ea;
+        }
+
+        /* FAQ Section (New!) */
+        .faq-item {
+            border-bottom: 1px solid #e5e5ea;
+            padding: 20px 0;
+        }
+
+        .faq-item:last-child {
+            border-bottom: none;
+        }
+
+        .faq-question {
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-bottom: 8px;
+            color: var(--text-main);
+        }
+
+        .faq-answer {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        /* Floating Checkout Bar */
+        .checkout-bar {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: 20px 30px;
+            border-radius: var(--border-radius);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+            position: sticky;
+            bottom: 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            z-index: 99;
+        }
+
+        .total-display {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--text-main);
+        }
+
+        .submit-btn {
+            background: linear-gradient(135deg, var(--secondary-color), #0056b3);
+            color: white;
+            border: none;
+            padding: 16px 36px;
+            border-radius: 30px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0, 122, 255, 0.3);
+            transition: all 0.2s;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 122, 255, 0.4);
+        }
+
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+
+        /* Footer Section (New!) */
+        footer {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            border-top: 1px solid #e5e5ea;
+            margin-top: 40px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="banner">
+        ⚠️ Place the order and we will message you if the 1 hour delivery is available or not!
+    </div>
+
+    <!-- Hero Title Header (New Section) -->
+    <header class="hero">
+        <span class="badge">Calgary SW Local Delivery</span>
+        <h1>Fanuel & Gawynt Candy</h1>
+        <p>Premium candy and sweet treats delivered right to your front step. Quick delivery supporting local students!</p>
+    </header>
+
+    <div class="container">
+        
+        <!-- About Us Section -->
+        <div class="section">
+            <h2>Who We Are</h2>
+            <p style="font-size: 1.1rem; color: #3a3a3c;">Hi, my name is <strong>Fanuel</strong> and my name is <strong>Gawynt</strong>! We are 8th graders living right here in Calgary. We started this business because we are trying to save up for school supplies for the beginning of Grade 8. Thank you so much for supporting us and helping us prepare for the upcoming school year!</p>
+        </div>
+
+        <!-- Goal Bar Section -->
+        <div class="section goal-container">
+            <h2>Our School Supply Goal</h2>
+            <div class="goal-numbers">
+                <span>Raised so far: <strong>$15.00</strong></span>
+                <span>Goal: <strong>$150.00</strong></span>
+            </div>
+            <div class="progress-bg">
+                <!-- Change the width % as you make sales! Currently at 10% ($15.00) -->
+                <div class="progress-fill" style="width: 10%;"></div> 
+            </div>
+            <p style="color: var(--text-muted); font-size: 0.95rem;">Every single candy purchase brings us closer to getting our grade 8 school supplies!</p>
+        </div>
+
+        <!-- How It Works Section (New Section) -->
+        <div class="section">
+            <h2>How It Works</h2>
+            <div class="steps-grid">
+                <div class="step-card">
+                    <div class="step-number">1</div>
+                    <h3>Select Your Treats</h3>
+                    <p>Browse our catalog below and pick your favorite candies, premium gum, or chocolate bars.</p>
+                </div>
+                <div class="step-card">
+                    <div class="step-number">2</div>
+                    <h3>Place Your Booking</h3>
+                    <p>Enter your Calgary delivery details and submit the form. We won't charge you until we arrive!</p>
+                </div>
+                <div class="step-card">
+                    <div class="step-number">3</div>
+                    <h3>Check Your Messages</h3>
+                    <p>We will quickly message you to confirm if our 1-hour delivery window is active and bring it to you.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Delivery Area Section -->
+        <div class="section">
+            <h2>Where We Deliver</h2>
+            <p>We deliver locally in Calgary to the following neighborhoods: <strong>Upper Mount Royal, Lower Mount Royal, Bankview, Marda Loop, and South Calgary.</strong></p>
+            <div class="map-container">
+                <!-- Google Maps Embed centered on Marda Loop / SW Calgary -->
+                <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d20074.88289456543!2d-114.0935!3d51.0333!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sen!2sca!4v1718000000000!5m2!1sen!2sca" width="100%" height="300" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+            </div>
+        </div>
+
+        <!-- Form begins here -->
+        <form action="https://formspree.io/f/xaqrqqna" method="POST" id="orderForm">
+            <!-- Redirect after Formspree submission to prevent Formspree site takeover -->
+            <input type="hidden" name="_next" value="https://Gawyntgg.github.io/ThankyouGS-Candy/">
+            <input type="hidden" name="_subject" value="New Candy Order!">
+
+            <!-- Store Inventory Section -->
+            <div class="section">
+                <h2>Choose Your Candy</h2>
+                <div class="grid">
+                    
+                    <!-- Item 1 -->
+                    <div class="product-card">
+                        <img src="ff11a34c-7d13-454c-b03b-e4d6e4c0babe.c9d788fd0bc9f9928a5d339d4b822a1d.jpeg.avif" alt="NERDS Gummy Clusters">
+                        <h3>NERDS Gummy Clusters Rainbow 142g</h3>
+                        <div class="price">$5.25</div>
+                        <div class="qty-controls">
+                            <button type="button" class="qty-btn dec">-</button>
+                            <input type="number" name="Item_NerdsClusters142g" min="0" value="0" class="qty-input" data-price="5.25">
+                            <button type="button" class="qty-btn inc">+</button>
+                        </div>
+                    </div>
+
+                    <!-- Item 2 -->
+                    <div class="product-card">
+                        <img src="cdf64cbd-7609-427d-8df7-f237d28ef53f.12ce59c52e2191076457956aa6cbcf51.jpeg.avif" alt="Sour Patch Big Headz">
+                        <h3>Sour Patch Kids Big Headz 154g</h3>
+                        <div class="price">$5.25</div>
+                        <div class="qty-controls">
+                            <button type="button" class="qty-btn dec">-</button>
+                            <input type="number" name="Item_SourPatchBigHeadz154g" min="0" value="0" class="qty-input" data-price="5.25">
+                            <button type="button" class="qty-btn inc">+</button>
+                        </div>
+                    </div>
+
+                    <!-- Item 3 -->
+                    <div class="product-card">
+                        <img src="fa3b6f15-6578-4121-94e8-646c3962374e.2fe79ae7378d49cdd825d73f31d1f9c9.jpeg.avif" alt="Sour Patch Watermelon 154g">
+                        <h3>Sour Patch Kids Watermelon 154g</h3>
+                        <div class="price">$5.25</div>
+                        <div class="qty-controls">
+                            <button type="button" class="qty-btn dec">-</button>
+                            <input type="number" name="Item_SourPatchWatermelon154g" min="0" value="0" class="qty-input" data-price="5.25">
+                            <button type="button" class="qty-btn inc">+</button>
+                        </div>
+                    </div>
+
+                    <!-- Item 4 -->
+                    <div class="product-card">
+                        <img src="0a577adf-04f6-4329-8cfc-f263272ebca6.82d820c683f233b340eb933c61555d85.jpeg.avif" alt="Sour Patch Extreme">
+                        <h3>Sour Patch Kids Extreme 150g</h3>
+                        <div class="price">$5.25</div>
+                        <div class="qty-controls">
+                            <button type="button" class="qty-btn dec">-</button>
+                            <input type="number" name="Item_SourPatchExtreme150g" min="0" value="0" class="qty-input" data-price="5.25">
+                            <button type="button" class="qty-btn inc">+</button>
+                        </div>
+                    </div>
+
+                    <!-- Item 5 -->
+                    <div class="product-card">
+                        <img src="6000207830947.jpg.avif" alt="Nerds Rope">
+                        <h3>Nerds Candy Rope 26g</h3>
+                        <div class="price">$3.99</div>
+                        <div class="qty-controls">
+                            <button type="button" class="qty-btn dec">-</button>
+                            <input type="number" name="Item_NerdsRope26g" min="0" value="0" class="qty-input" data-price="3.99">
+                            <button type="button" class="qty-btn inc">+</button>
+                        </div>
+                    </div>
+
+                    <!-- Item 6 -->
+                    <div class="product-card">
+                        <img src="500x500.jpg" alt="Sour Patch Watermelon 100g">
+                        <h3>Sour Patch Kids Watermelon 100g</h3>
+                        <div class="price">$3.99</div>
+                        <div class="qty-controls">
+                            <button type="button" class="qty-btn dec">-</button>
+                            <input type="number" name="Item_SourPatchWatermelon100g" min="0" value="0" class="qty-input" data-price="3.99">
+                            <button type="button" class="qty-btn inc">+</button>
+                        </div>
+                    </div>
+
+                    <!-- Item 7 -->
+                    <div class="product-card">
+                        <img src="hf9uiniqleqiuo7lnkxt.png" alt="Wrigley 5 Watermelon">
+                        <h3>Wrigley 5 Gum Watermelon</h3>
+                        <div class="price">$2.50</div>
+                        <div class="qty-controls">
+                            <button type="button" class="qty-btn dec">-</button>
+                            <input type="number" name="Item_GumWatermelon" min="0" value="0" class="qty-input" data-price="2.50">
+                            <button type="button" class="qty-btn inc">+</button>
+                        </div>
+                    </div>
+
+                    <!-- Item 8 -->
+                    <div class="product-card">
+                        <img src="images-2.jpeg" alt="Wrigley 5 Spearmint">
+                        <h3>Wrigley 5 Gum Spearmint</h3>
+                        <div class="price">$2.50</div>
+                        <div class="qty-controls">
+                            <button type="button" class="qty-btn dec">-</button>
+                            <input type="number" name="Item_GumSpearmint" min="0" value="0" class="qty-input" data-price="2.50">
+                            <button type="button" class="qty-btn inc">+</button>
+                        </div>
+                    </div>
+
+                    <!-- Item 9 -->
+                    <div class="product-card">
+                        <img src="superZoom-000000000000205211-754000000025700000000078742198-ml-ecomm.jpg" alt="Wrigley 5 Cobalt">
+                        <h3>Wrigley 5 Gum Cobalt (Peppermint)</h3>
+                        <div class="price">$2.50</div>
+                        <div class="qty-controls">
+                            <button type="button" class="qty-btn dec">-</button>
+                            <input type="number" name="Item_GumCobalt" min="0" value="0" class="qty-input" data-price="2.50">
+                            <button type="button" class="qty-btn inc">+</button>
+                        </div>
+                    </div>
+
+                    <!-- Item 10 -->
+                    <div class="product-card">
+                        <img src="129792-894__1.jpg" alt="Kit Kat">
+                        <h3>Kit Kat Standard Size 45g</h3>
+                        <div class="price">$2.50</div>
+                        <div class="qty-controls">
+                            <button type="button" class="qty-btn dec">-</button>
+                            <input type="number" name="Item_KitKat45g" min="0" value="0" class="qty-input" data-price="2.50">
+                            <button type="button" class="qty-btn inc">+</button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Delivery & Payment Info -->
+            <div class="section">
+                <h2>Delivery Details</h2>
+                
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <input type="text" name="Name" required placeholder="John Doe">
+                </div>
+                
+                <div class="form-group">
+                    <label>Delivery Address</label>
+                    <input type="text" name="Address" required placeholder="123 Main St SW, Calgary">
+                </div>
+
+                <div class="form-group">
+                    <label>Email Address</label>
+                    <input type="email" name="Email" required placeholder="email@example.com">
+                </div>
+
+                <div class="form-group">
+                    <label>Phone Number</label>
+                    <input type="tel" name="Phone" required placeholder="(403) 555-0123">
+                </div>
+
+                <div class="form-group">
+                    <label>Special Instructions (Optional)</label>
+                    <textarea name="Special_Instructions" rows="3" placeholder="Leave at front porch, buzz code, or specific drop-off details..."></textarea>
+                </div>
+
+                <h2 style="margin-top: 40px;">Payment Method</h2>
+                <div class="payment-note">
+                    💳 You can TAP TO PAY right when we deliver the treats directly in front of your house!
+                </div>
+                
+                <div class="payment-options">
+                    <label class="payment-card selected" id="cashCard">
+                        <input type="radio" name="Payment_Method" value="Cash" checked class="pay-radio">
+                        <strong>💵 Cash on Delivery</strong><br>
+                        <span style="font-size: 0.9rem; color: var(--text-muted);">No extra transaction charge. Exact change appreciated!</span>
+                    </label>
+                    
+                    <label class="payment-card" id="tapCard">
+                        <input type="radio" name="Payment_Method" value="Tap to Pay" class="pay-radio">
+                        <strong>📱 Tap to Pay (Card/Phone)</strong><br>
+                        <span style="font-size: 0.9rem; color: var(--text-muted);">An additional 20¢ transaction processing fee applies.</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- FAQ Section (New Section) -->
+            <div class="section">
+                <h2>Frequently Asked Questions</h2>
+                <div class="faq-item">
+                    <div class="faq-question">How does delivery confirmation work?</div>
+                    <div class="faq-answer">Once we receive your booking form through the website, we will check our availability and text you immediately to let you know if we can deliver within the 1-hour window.</div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">What payment methods are supported for Tap to Pay?</div>
+                    <div class="faq-answer">We accept Visa, Mastercard, Apple Pay, and Google Pay using our secure portable tap reader terminal when we arrive at your house.</div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">Where are you guys located?</div>
+                    <div class="faq-answer">We are based right here in Southwest Calgary. Because we travel on foot or by bike, we only deliver to Upper Mount Royal, Lower Mount Royal, Bankview, Marda Loop, and South Calgary.</div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">Why are you running this business?</div>
+                    <div class="faq-answer">We are moving into Grade 8! We wanted to take initiative and raise $150 to buy our own binders, notebooks, pens, and school gear for the upcoming academic year. Thanks for supporting local kids!</div>
+                </div>
+            </div>
+
+            <!-- Floating Checkout Bar -->
+            <div class="checkout-bar">
+                <div class="total-display">
+                    Total: <span id="cartTotal">$0.00</span>
+                </div>
+                <input type="hidden" name="Calculated_Total" id="hiddenTotal" value="$0.00">
+                <button type="submit" class="submit-btn">Complete Booking</button>
+            </div>
+            
+        </form>
+    </div>
+
+    <!-- Clean Footer (New Section) -->
+    <footer>
+        <p>© 2026 Fanuel & Gawynt Candy. Calgary, Alberta.</p>
+        <p style="margin-top: 5px; font-size: 0.8rem;">Modern web interface designed with clean aesthetics.</p>
+    </footer>
+
+    <!-- Interactive Cart & Quantity Logic -->
+    <script>
+        const qtyInputs = document.querySelectorAll('.qty-input');
+        const payRadios = document.querySelectorAll('.pay-radio');
+        const displayTotal = document.getElementById('cartTotal');
+        const hiddenTotal = document.getElementById('hiddenTotal');
+        const cashCard = document.getElementById('cashCard');
+        const tapCard = document.getElementById('tapCard');
+
+        // Setup increment/decrement buttons
+        document.querySelectorAll('.qty-controls').forEach(control => {
+            const decBtn = control.querySelector('.dec');
+            const incBtn = control.querySelector('.inc');
+            const input = control.querySelector('.qty-input');
+
+            decBtn.addEventListener('click', () => {
+                let val = parseInt(input.value) || 0;
+                if (val > 0) {
+                    input.value = val - 1;
+                    calculateTotal();
+                }
+            });
+
+            incBtn.addEventListener('click', () => {
+                let val = parseInt(input.value) || 0;
+                input.value = val + 1;
+                calculateTotal();
+            });
+        });
+
+        function calculateTotal() {
+            let total = 0;
+            
+            // Sum up candy prices based on quantity selected
+            qtyInputs.forEach(input => {
+                const qty = parseInt(input.value) || 0;
+                const price = parseFloat(input.getAttribute('data-price'));
+                total += (qty * price);
+            });
+
+            // Adjust borders of payment options based on selection and add $0.20 fee if Tap to Pay is chosen
+            let tapFee = 0;
+            const selectedPayment = document.querySelector('input[name="Payment_Method"]:checked').value;
+            
+            if (selectedPayment === 'Tap to Pay') {
+                tapCard.classList.add('selected');
+                cashCard.classList.remove('selected');
+                if (total > 0) {
+                    tapFee = 0.20;
+                    total += tapFee;
+                }
+            } else {
+                cashCard.classList.add('selected');
+                tapCard.classList.remove('selected');
+            }
+
+            const formattedTotal = '$' + total.toFixed(2);
+            displayTotal.textContent = formattedTotal;
+            hiddenTotal.value = formattedTotal;
+        }
+
+        // Event listeners to update the dynamic cart on changes
+        qtyInputs.forEach(input => {
+            input.addEventListener('input', () => {
+                if (input.value < 0) input.value = 0;
+                calculateTotal();
+            });
+        });
+
+        payRadios.forEach(radio => {
+            radio.addEventListener('change', calculateTotal);
+        });
+
+        // Block form submission if no products are selected
+        document.getElementById('orderForm').addEventListener('submit', function(e) {
+            let totalItemsSelected = 0;
+            qtyInputs.forEach(input => totalItemsSelected += parseInt(input.value) || 0);
+            
+            if (totalItemsSelected === 0) {
+                e.preventDefault();
+                alert("Your cart is empty! Please select at least one candy before clicking 'Complete Booking'.");
+            }
+        });
+    </script>
+</body>
+</html>

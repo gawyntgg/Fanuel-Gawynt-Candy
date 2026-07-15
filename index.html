@@ -803,15 +803,45 @@
             radio.addEventListener('change', calculateTotal);
         });
 
-        // Block form submission if no products are selected
+        // Block form submission if no products are selected & Handle AJAX submission to bypass Formspree page
         document.getElementById('orderForm').addEventListener('submit', function(e) {
+            e.preventDefault(); // Stop the default form action which redirects to Formspree
+
             let totalItemsSelected = 0;
             qtyInputs.forEach(input => totalItemsSelected += parseInt(input.value) || 0);
             
             if (totalItemsSelected === 0) {
-                e.preventDefault();
                 alert("Your cart is empty! Please select at least one candy before clicking 'Complete Booking'.");
+                return; // Stop the function here
             }
+
+            // Change button text while processing
+            const submitBtn = document.querySelector('.submit-btn');
+            const originalBtnText = submitBtn.textContent;
+            submitBtn.textContent = 'Processing...';
+
+            const form = e.target;
+            const data = new FormData(form);
+
+            // Send data to Formspree securely in the background
+            fetch(form.action, {
+                method: form.method,
+                body: data,
+                headers: {
+                    'Accept': 'application/json'
+                }
+            }).then(response => {
+                if (response.ok) {
+                    // Instantly redirect to YOUR thank you page upon success!
+                    window.location.href = "https://Gawyntgg.github.io/ThankyouGS-Candy/";
+                } else {
+                    alert("Oops! There was a problem submitting your order. Please try again.");
+                    submitBtn.textContent = originalBtnText;
+                }
+            }).catch(error => {
+                alert("Oops! There was a problem submitting your order. Please check your connection.");
+                submitBtn.textContent = originalBtnText;
+            });
         });
     </script>
 </body>

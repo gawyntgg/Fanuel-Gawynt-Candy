@@ -517,6 +517,8 @@
         <form action="https://formspree.io/f/xaqrqqna" method="POST" id="orderForm">
             <input type="hidden" name="_next" value="https://Gawyntgg.github.io/ThankyouGS-Candy/">
             <input type="hidden" name="_subject" value="New Candy Order!">
+            
+            <input type="hidden" name="Order_ID" id="generatedOrderId" value="">
 
             <div class="section">
                 <h2>Choose Your Candy</h2>
@@ -708,7 +710,7 @@
                     Total: <span id="cartTotal">$0.00</span>
                 </div>
                 <input type="hidden" name="Calculated_Total" id="hiddenTotal" value="$0.00">
-                <button type="submit" class="submit-btn">Complete Booking</button>
+                <button type="submit" class="submit-btn" id="submitBtn">Complete Booking</button>
             </div>
             
         </form>
@@ -805,60 +807,92 @@
         orderForm.addEventListener('submit', async (e) => {
             e.preventDefault(); // Pause submission
 
-            // Prevent empty submissions (Fixed your cutoff here!)
+            // Prevent empty submissions (Fixed your cutoff right here!)
             const currentTotal = parseFloat(hiddenTotalEl.value.replace('$', ''));
-            if(currentTotal <= 0) {
-                alert("Please add at least one item to your cart before ordering!");
+            if (currentTotal <= 0) {
+                alert("Please add at least one item to your cart before booking!");
                 return;
             }
 
-            // Resume form submission once validated
-            orderForm.submit();
-        });
-
-        // --- INLINE ORDER TRACKER LOGIC (REPLACES POPUP) ---
-        const trackBtn = document.getElementById('trackBtn');
-        const trackOrderId = document.getElementById('trackOrderId');
-        const trackerResult = document.getElementById('trackerResult');
-        const statusText = document.getElementById('statusText');
-        const deliveryPhoto = document.getElementById('deliveryPhoto');
-
-        trackBtn.addEventListener('click', async () => {
-            const orderId = trackOrderId.value.trim().toUpperCase();
+            // 1. Generate Order ID
+            const randomNum = Math.floor(1000 + Math.random() * 9000);
+            const generatedId = `FG-${randomNum}`;
+            document.getElementById('generatedOrderId').value = generatedId; // Apply to Formspree hidden input
             
-            if (!orderId) {
-                alert("Please enter your Order ID.");
-                return;
-            }
-
-            // Show the Tracker UI down below instead of opening a window
-            trackerResult.style.display = 'block';
-            statusText.textContent = "Searching Database...";
-            statusText.style.color = "var(--text-muted)";
-            deliveryPhoto.style.display = 'none';
+            // Change button text so user knows it's working
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.textContent = "Processing...";
+            submitBtn.disabled = true;
 
             try {
-                // Fetch status from Firebase Database
+                // 2. Save Data to Firebase first
+                const orderRef = ref(database, 'orders/' + generatedId);
+                await set(orderRef, {
+                    status: "Pending Confirmation",
+                    totalAmount: hiddenTotalEl.value,
+                    timestamp: new Date().toISOString()
+                });
+
+                // 3. Manually submit to Formspree using Fetch API
+                const formData = new FormData(orderForm);
+                const response = await fetch(orderForm.action, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                });
+
+                if (response.ok) {
+                    // 4. Manual Redirect to Thank You Page
+                    window.location.href = "https://Gawyntgg.github.io/ThankyouGS-Candy/";
+                } else {
+                    alert("Oops! There was a problem submitting your form to Formspree.");
+                    submitBtn.textContent = "Complete Booking";
+                    submitBtn.disabled = false;
+                }
+            } catch (error) {
+                console.error("Error saving to Firebase:", error);
+                alert("There was an error saving your order. Please try again.");
+                submitBtn.textContent = "Complete Booking";
+                submitBtn.disabled = false;
+            }
+        });
+
+        // --- TRACKING WIDGET LOGIC ---
+        const trackBtn = document.getElementById('trackBtn');
+        const trackInput = document.getElementById('trackOrderId');
+        const trackerResult = document.getElementById('trackerResult');
+        const statusText = document.getElementById('statusText');
+
+        trackBtn.addEventListener('click', async () => {
+            const idToTrack = trackInput.value.trim().toUpperCase();
+            
+            if (idToTrack === "") {
+                alert("Please enter a valid Order ID.");
+                return;
+            }
+
+            // Show loading UI
+            trackerResult.style.display = 'block';
+            statusText.textContent = "Loading...";
+            statusText.style.color = "var(--primary-color)";
+
+            try {
                 const dbRef = ref(database);
-                const snapshot = await get(child(dbRef, `orders/${orderId}`));
+                const snapshot = await get(child(dbRef, `orders/${idToTrack}`));
                 
                 if (snapshot.exists()) {
                     const data = snapshot.val();
-                    statusText.textContent = data.status || "Status Updating...";
-                    statusText.style.color = "var(--primary-color)";
-                    
-                    // Show a proof of delivery photo if it exists
-                    if (data.photoUrl) {
-                        deliveryPhoto.src = data.photoUrl;
-                        deliveryPhoto.style.display = "block";
-                    }
+                    statusText.textContent = data.status;
+                    statusText.style.color = "#34c759"; // Green for success
                 } else {
-                    statusText.textContent = "Order not found. Check your spelling!";
+                    statusText.textContent = "Order not found. Check your ID!";
                     statusText.style.color = "red";
                 }
             } catch (error) {
-                console.error("Tracker error:", error);
-                statusText.textContent = "Error communicating with tracking system.";
+                console.error("Error fetching tracker info:", error);
+                statusText.textContent = "Error loading status.";
                 statusText.style.color = "red";
             }
         });

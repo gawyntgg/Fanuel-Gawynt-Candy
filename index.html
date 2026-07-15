@@ -805,143 +805,60 @@
         orderForm.addEventListener('submit', async (e) => {
             e.preventDefault(); // Pause submission
 
-            // Prevent empty submissions
+            // Prevent empty submissions (Fixed your cutoff here!)
             const currentTotal = parseFloat(hiddenTotalEl.value.replace('$', ''));
             if(currentTotal <= 0) {
-                alert("Please add some candy to your cart before checking out!");
+                alert("Please add at least one item to your cart before ordering!");
                 return;
             }
 
-            // Generate a random Order ID (e.g., FG-8492)
-            const randomCode = Math.floor(1000 + Math.random() * 9000);
-            const orderId = `FG-${randomCode}`;
-
-            // Add the Order ID as a hidden input so it goes to Formspree
-            const hiddenInput = document.createElement('input');
-            hiddenInput.type = 'hidden';
-            hiddenInput.name = 'Order_ID';
-            hiddenInput.value = orderId;
-            orderForm.appendChild(hiddenInput);
-
-            // Save standard status to Firebase
-            try {
-                await set(ref(database, 'orders/' + orderId), {
-                    status: 'Order Placed',
-                    photoUrl: ''
-                });
-                
-                // --- FETCH LOGIC TO FIX THANK YOU REDIRECT (Bypasses Formspree Captcha blocks) ---
-                const formData = new FormData(orderForm);
-                const nextUrl = orderForm.querySelector('input[name="_next"]').value;
-                
-                fetch(orderForm.action, {
-                    method: 'POST',
-                    body: formData,
-                    headers: {
-                        'Accept': 'application/json'
-                    }
-                }).then(response => {
-                    if (response.ok) {
-                        window.location.href = nextUrl; // Properly forces the redirect to your URL
-                    } else {
-                        alert("Oops! There was a problem submitting your order. Please try again.");
-                    }
-                }).catch(error => {
-                    console.error("Submission error:", error);
-                    alert("There was an issue processing the form request.");
-                });
-
-            } catch (error) {
-                console.error("Firebase Error: ", error);
-                alert("There was an error connecting to the database. Please try again.");
-            }
+            // Resume form submission once validated
+            orderForm.submit();
         });
 
-        // --- ORDER TRACKING LOGIC (Upgraded for New Page & Live Updates) ---
+        // --- INLINE ORDER TRACKER LOGIC (REPLACES POPUP) ---
         const trackBtn = document.getElementById('trackBtn');
-        trackBtn.addEventListener('click', async () => {
-            const trackInput = document.getElementById('trackOrderId').value.trim().toUpperCase();
-            const resultDiv = document.getElementById('trackerResult');
-            const statusText = document.getElementById('statusText');
-            const deliveryPhoto = document.getElementById('deliveryPhoto');
+        const trackOrderId = document.getElementById('trackOrderId');
+        const trackerResult = document.getElementById('trackerResult');
+        const statusText = document.getElementById('statusText');
+        const deliveryPhoto = document.getElementById('deliveryPhoto');
 
-            if (!trackInput) {
-                alert("Please enter a valid Order ID!");
+        trackBtn.addEventListener('click', async () => {
+            const orderId = trackOrderId.value.trim().toUpperCase();
+            
+            if (!orderId) {
+                alert("Please enter your Order ID.");
                 return;
             }
 
-            // Briefly show the inline message before spawning the window
-            resultDiv.style.display = 'block';
-            statusText.textContent = "Opening Live Tracker in New Tab...";
+            // Show the Tracker UI down below instead of opening a window
+            trackerResult.style.display = 'block';
+            statusText.textContent = "Searching Database...";
             statusText.style.color = "var(--text-muted)";
             deliveryPhoto.style.display = 'none';
 
             try {
+                // Fetch status from Firebase Database
                 const dbRef = ref(database);
-                const snapshot = await get(child(dbRef, `orders/${trackInput}`));
+                const snapshot = await get(child(dbRef, `orders/${orderId}`));
                 
                 if (snapshot.exists()) {
-                    statusText.textContent = "Live Tracker Opened!";
+                    const data = snapshot.val();
+                    statusText.textContent = data.status || "Status Updating...";
                     statusText.style.color = "var(--primary-color)";
                     
-                    // --- DYNAMICALLY OPEN THE NEW REAL-TIME TRACKING PAGE ---
-                    const newWin = window.open("", "_blank");
-                    if (newWin) {
-                        newWin.document.write(`
-                        <!DOCTYPE html>
-                        <html lang="en">
-                        <head>
-                            <meta charset="UTF-8">
-                            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                            <title>Live Tracker: ${trackInput}</title>
-                            <style>
-                                body { font-family: -apple-system, sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; background-color: #fcfcfc; margin: 0; }
-                                .tracking-card { background: white; padding: 40px; border-radius: 20px; box-shadow: 0 8px 30px rgba(0,0,0,0.05); text-align: center; max-width: 400px; width: 90%; }
-                                h1 { color: #1d1d1f; margin-bottom: 5px; font-size: 1.8rem; }
-                                p { color: #86868b; margin-bottom: 25px; }
-                                .status-bubble { background: #ff2d55; color: white; padding: 12px 25px; border-radius: 30px; font-weight: bold; font-size: 1.2rem; display: inline-block; margin-bottom: 20px; }
-                                img { width: 100%; border-radius: 12px; margin-top: 15px; border: 2px solid #e5e5ea; display: none; }
-                            </style>
-                        </head>
-                        <body>
-                            <div class="tracking-card">
-                                <h1>Order Tracker</h1>
-                                <p>Order ID: <strong>${trackInput}</strong></p>
-                                <div class="status-bubble" id="liveStatus">Fetching Status...</div>
-                                <img id="livePhoto" src="" alt="Delivery Proof">
-                            </div>
-                            
-                            <script type="module">
-                                import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-                                import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
-                                
-                                const app = initializeApp(${JSON.stringify(firebaseConfig)});
-                                const db = getDatabase(app);
-                                
-                                onValue(ref(db, 'orders/${trackInput}'), (snapshot) => {
-                                    const data = snapshot.val();
-                                    if(data) {
-                                        document.getElementById('liveStatus').textContent = data.status || 'Order Placed';
-                                        
-                                        if(data.photoUrl) {
-                                            const img = document.getElementById('livePhoto');
-                                            img.src = data.photoUrl;
-                                            img.style.display = 'block';
-                                        }
-                                    }
-                                });
-                            <\/script>
-                        </body>
-                        </html>
-                        `);
+                    // Show a proof of delivery photo if it exists
+                    if (data.photoUrl) {
+                        deliveryPhoto.src = data.photoUrl;
+                        deliveryPhoto.style.display = "block";
                     }
                 } else {
-                    statusText.textContent = "Order ID Not Found!";
+                    statusText.textContent = "Order not found. Check your spelling!";
                     statusText.style.color = "red";
                 }
             } catch (error) {
-                console.error("Lookup Error: ", error);
-                statusText.textContent = "Error finding order.";
+                console.error("Tracker error:", error);
+                statusText.textContent = "Error communicating with tracking system.";
                 statusText.style.color = "red";
             }
         });
